@@ -3,7 +3,7 @@ import { createMockClient } from "./mock";
 
 export function createClient() {
   if (process.env.NEXT_PUBLIC_USE_MOCK_SUPABASE === "true") {
-    return createMockClient() as ReturnType<typeof createSupabaseClient>;
+    return createMockClient() as unknown as ReturnType<typeof createSupabaseClient>;
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
