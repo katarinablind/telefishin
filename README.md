@@ -51,53 +51,21 @@ Then open **http://localhost:3000** in your browser (if you see "Port 3000 is in
 
 ---
 
-## What’s done so far
+## Features
 
-| Area | Status |
-|------|--------|
-| **Next.js + Tailwind** | ✅ App Router, `app/`, `globals.css`, Pixelify Sans font |
-| **Supabase** | ✅ Client in `lib/supabase/client.ts`; mock client when `NEXT_PUBLIC_USE_MOCK_SUPABASE=true` |
-| **Device ID** | ✅ `lib/deviceId.ts` — localStorage `ftf_device_id` for no-account identity |
-| **Day/night helper** | ✅ `lib/dayNight.ts` — hour-based day/night per timezone (for fish glow) |
-| **Landing page** | ✅ `app/page.tsx` — "Fish Tank Friends" + link to Create a tank |
-| **Create tank** | ✅ `app/create/page.tsx` — inserts tank, redirects to `/t/[tankId]` |
-| **Tank page** | ✅ `app/t/[tankId]/page.tsx` — loads tank + members, shows TV + screen |
-| **TV frame** | ✅ `components/tank/TVFrame.tsx` — TV overlay, SCREEN_RECT from `lib/tvLayout.ts` |
-| **Tank screen** | ✅ `components/tank/TankScreen.tsx` — background image (wallpaper) inside TV cutout |
-| **Wallpaper picker** | ✅ `components/tank/WallpaperPicker.tsx` — 8 options, stored in `localStorage` (`ftf_wallpaper`) |
-| **Backgrounds** | ✅ Images in `public/backgrounds/` (light, dark, blue-hour, sunrise, sunset, purple, pixel, disco) |
-| **Schema / RLS** | ✅ Designed (tanks, members, bubbles with UUIDs; RLS policies) — run in Supabase SQL Editor |
+- **No accounts** — Join a tank via link; identity is a device ID in localStorage.
+- **Tanks** — Create a tank, get a shareable URL; everyone with the link sees the same tank.
+- **Join flow** — On first visit, a sheet lets you pick a fish type (1–11), optional name and city; timezone is read from the browser. Members are upserted by tank + device ID.
+- **Fish** — One fish per member in the tank; swim, bob, glow; day/night styling based on each member’s timezone.
+- **Bubbles** — A button sends a “bubble ping” (rate limited). Bubbles are stored in Supabase, synced in realtime, and animated (float up, fade) for everyone in the tank.
+- **Realtime** — Supabase channel for `members` and `bubbles` by `tank_id` so new fish and bubbles appear for all viewers.
+- **TV + wallpaper** — Tank is shown inside a TV-style frame; you can pick from several background wallpapers (stored in localStorage).
 
-**Not built yet (next steps):**
-
-- **JoinSheet** — modal/sheet to pick fish type, name, city, timezone; upsert member by `(tank_id, device_id)`.
-- **Fish component** — one fish per member; reuse prototype swim/bob/glow/sun-moon from `src/components/AnimatedFish.tsx`; day/night from member’s timezone.
-- **Bubble button** — single button that inserts a bubble row; client-side rate limit.
-- **BubbleLayer** — subscribe to bubbles (realtime or mock); animate bubbles float up and fade.
-- **Realtime** — Supabase channel for `members` and `bubbles` by `tank_id` so all viewers see new fish and bubbles.
+**Tech:** App Router, Tailwind, Supabase (Postgres + Realtime), optional in-memory mock when `NEXT_PUBLIC_USE_MOCK_SUPABASE=true`. Schema and RLS in `supabase/schema.sql`.
 
 ---
 
-## Next steps (in order)
-
-1. **Run schema in Supabase** (if using real DB)  
-   Paste the full SQL (tables + indexes + RLS) into Supabase → SQL Editor → Run.
-
-2. **JoinSheet**  
-   When `currentMember` is null, show a sheet/modal: fish type (1–11), optional name, optional city, read-only timezone (from browser). On submit: `upsert` into `members` with `tank_id`, `device_id` from localStorage.
-
-3. **Fish component**  
-   Port logic from `src/components/AnimatedFish.tsx` (and fish assets from `src/components/Fish1.tsx`…`Fish11.tsx` or `src/assets`). Props: member’s `fish_type`, `display_name`, `city`, `timezone`. Use `isDayInTimezone(timezone)` for glow and sun/moon. Render inside `TankScreen`.
-
-4. **Bubble button + BubbleLayer**  
-   Button in tank UI that inserts into `bubbles` (with rate limit). Subscribe to new bubbles (realtime or mock); render in `BubbleLayer` with float-up + fade animation; remove from state after animation.
-
-5. **Realtime subscriptions**  
-   In `TankPage`, open a Supabase channel; listen for `INSERT`/`UPDATE` on `members` and `INSERT` on `bubbles` filtered by `tank_id`. Update `members` and bubble list state so all viewers stay in sync.
-
----
-
-## Project layout (main pieces)
+## Project layout
 
 ```
 app/
@@ -108,16 +76,12 @@ app/
 components/tank/
   TankPage.tsx          # Data + subscriptions + TV
   TVFrame.tsx           # TV overlay + screen rect + wallpaper picker
-  TankScreen.tsx        # Background + (fish + bubbles)
-  TankScreen.tsx
+  TankScreen.tsx        # Background + fish + bubbles
   WallpaperPicker.tsx
 lib/
   supabase/client.ts    # Real or mock
   supabase/mock.ts      # In-memory when USE_MOCK_SUPABASE=true
-  deviceId.ts
-  dayNight.ts
-  wallpaper.ts
-  tvLayout.ts           # SCREEN_RECT for TV cutout
+  deviceId.ts, dayNight.ts, wallpaper.ts, tvLayout.ts
 public/
   frame/tv.png
   backgrounds/*.png
