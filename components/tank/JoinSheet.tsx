@@ -74,7 +74,7 @@ export function JoinSheet({ open, onSubmit }: JoinSheetProps) {
           Join the tank
         </h2>
         <p className="font-pixelify text-sm text-neutral-400 mb-6">
-          Pick your sea animal and how you’d like to appear. Your timezone sets day or night at your place (change it if you're traveling).
+          Pick your sea animal and how you’d like to appear. Your timezone sets day or night at your place.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
