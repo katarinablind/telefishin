@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-size: 16px;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --radius: 0.625rem;
+  /* Tank page outer background — only used on home/create/guard; tank page uses theme. Default light so no black. */
+  --page-bg-tank: #DFD9D4;
+  /* Highlight color for buttons, borders, focus (teal) */
+  --highlight: #27a5bb;
+  --highlight-hover: #1e8fa8;
+}
+
+body {
+  @apply bg-[var(--background)] text-[var(--foreground)];
+  font-size: var(--font-size);
+}
+
+html {
+  font-size: var(--font-size);
+  /* Prevent any default dark background (e.g. #0A0A0A) from showing */
+  background-color: var(--background);
+}
